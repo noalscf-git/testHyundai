@@ -29,43 +29,34 @@ const RenderItemEvent:React.FC<RenderItemEventProps>=({item,onPress})=>{
 
 export const EventsScreen: React.FC = () => {
 
-
-
     const {events,loading} = useSelector<AppState,EventState>(({ event }) => event);
-
     const dispatch = useDispatch();
     const navigation=useNavigation()
-
     const [isRefreshing, setIsRefreshing] = useState(true);
- 
     const isFocused = useIsFocused();
         
-useEffect(()=>{
-    isFocused&&getEvents()
-},[isFocused])
+    useEffect(()=>{
+        isFocused&&getEvents()
+    },[isFocused])
 
-          useFocusEffect(
-            React.useCallback(() => { 
+    useFocusEffect(
+    React.useCallback(() => { 
              
-                if(isRefreshing){
-                    const intervalId = setInterval(() => { 
-                        console.log('update')
-                        getEvents()
-                    }, 20000)
-                  
-                    return () => clearInterval(intervalId); 
-                }
-                else{
-                    const intervalId = setTimeout(() => {  
-                        setIsRefreshing(true)
-                    }, 5000)
-                  
-                    return () => clearTimeout(intervalId); 
-                }
-            }, [isRefreshing])
-          );
+        if(isRefreshing){
+            const intervalId = setInterval(() => { 
+                getEvents()
+            }, 60000)
+            return () => clearInterval(intervalId); 
+        }
+        else{
+            const intervalId = setTimeout(() => {  
+                setIsRefreshing(true)
+            }, 15000)
+            return () => clearTimeout(intervalId); 
+        }
+    }, [isRefreshing])
+    );
           
-
 
     const getEvents = async () => {
         try {
@@ -73,7 +64,7 @@ useEffect(()=>{
             setIsRefreshing(false)
             return null;
         } catch (error) {
-            console.log("getTasks error", error)
+            console.log("getEvents error", error)
         }
         return null
     }
@@ -98,7 +89,7 @@ useEffect(()=>{
                         )}}
                             
                     keyExtractor={(item) => item.id}
-                    onRefresh={isRefreshing?()=>{getEvents();console.log('onRefresh')}:undefined}
+                    onRefresh={isRefreshing?()=>getEvents():undefined}
                     refreshing={loading}
                 />                   
         </SafeAreaView>
